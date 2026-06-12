@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Adolescent Health | PHN Study Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flip-card:hover .flip-inner { transform: rotateY(180deg); }
+        .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+        .recall-mode .reveal-text {
+            background-color: #cbd5e1;
+            color: transparent;
+            border-radius: 0.375rem;
+            padding: 0 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            box-shadow: inset 0 0 0 1px #94a3b8;
+        }
+        .recall-mode .reveal-text:hover, .recall-mode .reveal-text.revealed {
+            background-color: #fde047;
+            color: #1e293b;
+            box-shadow: none;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #b91c1c; border-radius: 8px; }
+        .content-section { animation: fade 0.3s ease; }
+        @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .locked-section { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { ah: { light: '#fef2f2', DEFAULT: '#b91c1c', dark: '#7f1d1d', accent: '#f97316' } } } }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 h-screen flex flex-col md:flex-row font-sans text-slate-800 overflow-hidden">
+
+    <!-- Mobile Header -->
+    <div class="md:hidden bg-ah-dark text-white p-4 flex justify-between items-center shadow-md z-30 shrink-0">
+        <button onclick="toggleMobileMenu()" class="text-white focus:outline-none z-40"><i class="fa-solid fa-bars text-2xl"></i></button>
+        <h1 class="font-bold text-lg absolute left-1/2 transform -translate-x-1/2 pointer-events-none"><i class="fa-solid fa-child mr-2"></i> Adolescent Health</h1>
+        <div class="w-8"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="hidden md:flex flex-col w-full md:w-80 bg-white shadow-2xl h-full absolute md:relative z-30 transition-transform duration-300 shrink-0 border-r border-slate-200">
+        <div class="p-6 bg-gradient-to-br from-ah-dark to-ah text-white hidden md:block shrink-0">
+            <h1 class="font-black text-2xl tracking-wide"><i class="fa-solid fa-child-reaching text-ah-light mr-2"></i> Adolescent Health</h1>
+            <p class="text-sm text-slate-300 mt-1 font-medium">CHN White Book · PHN Review</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 text-sm font-medium">
+                <li><button onclick="showSection('home')" id="btn-home" class="nav-btn w-full text-left px-6 py-3 bg-ah-light text-ah-dark border-r-4 border-ah-dark"><i class="fa-solid fa-house w-6 nav-icon"></i> Start</button></li>
+                <li><button onclick="showSection('overview')" id="btn-overview" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-chart-line w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Overview & Epidemiology</button></li>
+                <li><button onclick="showSection('risks')" id="btn-risks" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-triangle-exclamation w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Health Risks & Behaviors</button></li>
+                <li><button onclick="showSection('strategies')" id="btn-strategies" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-bullhorn w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Strategic Thrusts (2005-2010)</button></li>
+                <li><button onclick="showSection('package')" id="btn-package" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-kit-medical w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Essential Health Care Package</button></li>
+                <li><button onclick="showSection('reproductive')" id="btn-reproductive" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-venus-mars w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Adolescent Reproductive Health</button></li>
+                <li><button onclick="showSection('phnrole')" id="btn-phnrole" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-user-nurse w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> PHN Role & Nursing Care</button></li>
+                <li><button onclick="showSection('mnemonics')" id="btn-mnemonics" class="nav-btn w-full text-left px-6 py-3 text-slate-600 border-t border-slate-200 mt-2 locked-section"><i class="fa-solid fa-brain w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Mnemonics & Key Facts</button></li>
+                <li><button onclick="showSection('final_quiz_sec')" id="btn-final_quiz_sec" class="nav-btn w-full text-left px-6 py-3 text-slate-600 locked-section"><i class="fa-solid fa-graduation-cap w-6 text-amber-500 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Final 50‑Item Exam</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 h-full overflow-y-auto bg-slate-100 relative w-full">
+        <!-- Active Recall Toggle -->
+        <div class="fixed top-16 md:top-4 right-4 md:right-8 z-40 flex items-center bg-white/90 backdrop-blur px-4 py-3 rounded-full shadow-lg border border-slate-200 cursor-pointer hover:bg-slate-50" onclick="toggleRecallMode()">
+            <span class="mr-3 text-sm font-bold text-slate-700 hidden md:inline"><i class="fa-solid fa-brain text-ah mr-1"></i> Active Recall</span>
+            <span class="mr-3 text-sm font-bold text-slate-700 md:hidden"><i class="fa-solid fa-brain text-ah"></i></span>
+            <button id="recall-toggle" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 pointer-events-none">
+                <div id="recall-knob" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 shadow"></div>
+            </button>
+        </div>
+
+        <div class="p-4 md:p-8 max-w-6xl mx-auto pb-32">
+            <!-- HOME SECTION -->
+            <section id="home" class="content-section flex flex-col items-center justify-center min-h-[80vh] text-center block">
+                <div class="bg-gradient-to-br from-slate-800 to-ah-dark text-white rounded-3xl shadow-2xl p-10 md:p-16 w-full relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 text-white opacity-5"><i class="fa-solid fa-child-reaching text-[20rem]"></i></div>
+                    <div class="relative z-10">
+                        <div class="bg-white/10 backdrop-blur-sm inline-block p-4 rounded-full text-ah-light mb-6"><i class="fa-solid fa-heartbeat text-5xl"></i></div>
+                        <h3 class="text-xl font-bold text-slate-300 mb-2 uppercase tracking-widest">Life Stage Approach</h3>
+                        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-md">Adolescent Health<br><span class="text-3xl md:text-5xl text-ah-light">(10‑24 years)</span></h1>
+                        <div class="bg-white/10 backdrop-blur inline-block px-6 py-3 rounded-full mb-10"><p class="text-lg font-medium">"Investing in adolescents builds the foundation for a healthy adult population."</p></div>
+                        <button onclick="unlockFirstSection()" class="bg-ah hover:bg-ah-dark text-white font-black py-4 px-10 rounded-full shadow-xl transition-transform hover:scale-105 text-lg flex items-center mx-auto">Start Module <i class="fa-solid fa-arrow-right ml-3"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: Overview & Epidemiology (CHN White Book p. 176-177) -->
+            <section id="overview" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-chart-line text-ah mr-4"></i> Overview & Epidemiology</h2>
+                    <div class="bg-red-50 border-l-4 border-ah p-4 mb-6 rounded-r">
+                        <p><strong class="text-ah-dark">Definitions (WHO, CHN White Book):</strong> Adolescence = 10‑20 years; Youth = 15‑24 years; Young people = 10‑24 years. The period of transition from childhood to adulthood.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-5 rounded-xl border">
+                            <h3 class="font-bold text-lg mb-3"><i class="fa-solid fa-chart-simple text-ah"></i> Philippine Demographics</h3>
+                            <ul class="list-disc pl-5 space-y-2 text-sm">
+                                <li>Young people (10‑24) account for <span class="reveal-text">over 30% of total Philippine population</span> (approx. 26 million).</li>
+                                <li>Young people have developed physiologic resistance against common acute infections.</li>
+                                <li>Mortality from all causes for this age group: <span class="reveal-text">0.87 per 100,000</span>.</li>
+                                <li>By age 24, <span class="reveal-text">45% of women</span> are already mothers.</li>
+                                <li>Women 15‑24 have the highest unmet need for family planning at <span class="reveal-text">26%</span>.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-xl border">
+                            <h3 class="font-bold text-lg mb-3"><i class="fa-solid fa-calendar-week"></i> Age‑Specific Definitions</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Adolescence: 10‑20 years</li>
+                                <li>Youth: 15‑24 years</li>
+                                <li>Young people: 10‑24 years (combined group used in policy)</li>
+                                <li>Early adolescence: 10‑14 years</li>
+                                <li>Late adolescence: 15‑19 years</li>
+                                <li>Emerging adulthood: 20‑24 years</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="openQuiz('overview')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl"><i class="fa-solid fa-list-check mr-3 text-2xl text-ah"></i> Take Quiz to Unlock Next Section</button>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Health Risks & Behaviors (CHN White Book p. 177) -->
+            <section id="risks" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-triangle-exclamation text-ah mr-4"></i> Health Risks & Behaviors</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-5 rounded-xl border-red-200">
+                            <h3 class="font-bold text-lg text-red-800"><i class="fa-solid fa-dice-d6"></i> Behavioral Risks</h3>
+                            <ul class="list-disc pl-5 text-sm mt-2">
+                                <li>By age 19, <span class="reveal-text">12% of young people</span> are already sexually active.</li>
+                                <li>Smoking prevalence among adolescents: <span class="reveal-text">21%</span>.</li>
+                                <li>Social drinking: <span class="reveal-text">41%</span> admit to drinking alcohol.</li>
+                                <li>Random drug testing in high school students: positivity rates <span class="reveal-text">3% to 10%</span>.</li>
+                                <li>Drug use rate higher among high school students than college students.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 p-5 rounded-xl border-amber-200">
+                            <h3 class="font-bold text-lg text-amber-800"><i class="fa-solid fa-car-crash"></i> Leading Cause of Death</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Accidents and injuries are the <span class="reveal-text">most common cause of death</span> among young people (10‑24).</li>
+                                <li>Rate: <span class="reveal-text">30.68 per 100,000</span> persons aged 10‑24 (2000 data).</li>
+                                <li>About <span class="reveal-text">22.52%</span> of all deaths due to accidents/injuries are adolescents and youth.</li>
+                            </ul>
+                            <p class="mt-2 text-sm">Unmet need for family planning among 15‑24 year olds: <strong>26%</strong> (highest of any age group).</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-100 p-3 rounded-lg border-l-4 border-ah">
+                        <p class="font-bold">📌 Key point: While adolescents are physically resilient, risk‑taking behaviors (substance use, early sexual activity) create significant health challenges.</p>
+                    </div>
+                    <button onclick="openQuiz('risks')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl"><i class="fa-solid fa-list-check mr-3"></i> Take Quiz →</button>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Strategic Thrusts 2005-2010 (CHN White Book p. 177) -->
+            <section id="strategies" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-bullhorn text-ah mr-4"></i> Strategic Thrusts (DOH 2005-2010)</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-slate-700">
+                        <li>Come up with models for <span class="reveal-text">adolescent‑friendly health services</span> and adolescent‑friendly environments. A comprehensive adolescent/young people’s health care package needs to be designed and implemented in coordination with other government agencies.</li>
+                        <li>Organize and build the capability of young people to promote healthy lifestyles, including sound reproductive health practices, accident prevention, and promotion of sound policies on work to improve their health and quality of life.</li>
+                        <li>Continue <span class="reveal-text">fertility awareness activities</span> among high school teachers and students to reduce the proportion of unwanted pregnancies and unmet need for family planning among young people.</li>
+                    </ul>
+                    <div class="bg-cyan-50 p-4 rounded-lg mt-6 border-l-4 border-cyan-600">
+                        <p class="font-bold">🎯 Goal: Create a supportive environment where adolescents can access age‑appropriate, confidential, and respectful health services.</p>
+                    </div>
+                    <button onclick="openQuiz('strategies')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl"><i class="fa-solid fa-list-check mr-3"></i> Take Quiz →</button>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Essential Health Care Package (CHN White Book p. 177) -->
+            <section id="package" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-kit-medical text-ah mr-4"></i> Essential Health Care Package for Adolescents & Youth</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 p-5 rounded-xl border-green-200">
+                            <h3 class="font-bold text-lg text-green-800">Core Services (6 items)</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li><span class="reveal-text">Management of illness</span> (common acute and chronic conditions).</li>
+                                <li><span class="reveal-text">Counseling on substance abuse, sexuality, and reproductive tract infections</span> (STIs).</li>
+                                <li><span class="reveal-text">Nutrition and diet counseling</span> (eating disorders, obesity, undernutrition).</li>
+                                <li><span class="reveal-text">Mental health</span> (depression, anxiety, stress management, suicide prevention).</li>
+                                <li><span class="reveal-text">Family planning and responsible sexual behavior</span> (contraception, abstinence, prevention of teenage pregnancy).</li>
+                                <li><span class="reveal-text">Dental care</span> (oral health, caries prevention).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50 p-5 rounded-xl border-blue-200">
+                            <h3 class="font-bold text-lg text-blue-800">Additional Important Components</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Adolescent‑friendly clinic setup (confidentiality, non‑judgmental staff).</li>
+                                <li>Life skills education and peer counseling.</li>
+                                <li>STI/HIV prevention and testing.</li>
+                                <li>Violence and injury prevention (accidents, bullying, domestic violence).</li>
+                                <li>Physical activity promotion.</li>
+                                <li>Substance abuse rehabilitation referral.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-amber-50 p-3 rounded-lg border-l-4 border-amber-600">
+                        <p class="font-bold">📌 The package should be evidence‑based, integrated with school health programs, and accessible in both RHUs and community settings.</p>
+                    </div>
+                    <button onclick="openQuiz('package')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl"><i class="fa-solid fa-list-check mr-3"></i> Take Quiz →</button>
+                </div>
+            </section>
+
+            <!-- SECTION 5: Adolescent Reproductive Health (CHN White Book p. 182) -->
+            <section id="reproductive" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-venus-mars text-ah mr-4"></i> Adolescent Reproductive Health</h2>
+                    <div class="bg-red-50 border-l-4 border-red-600 p-4 mb-4 rounded-r">
+                        <p>Under the Philippine Reproductive Health framework, <strong>Adolescent Reproductive Health (ARH)</strong> is one of the 10 priority elements. It focuses on fertility awareness, human sexuality, and counseling to promote responsible sexuality among adolescents.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-5 rounded-xl">
+                            <h3 class="font-bold text-lg">Key ARH Interventions</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Age‑appropriate sexuality education.</li>
+                                <li>Access to contraceptive information and services (with parental consent as required).</li>
+                                <li>Prevention and management of teenage pregnancy.</li>
+                                <li>STI and HIV/AIDS education and testing.</li>
+                                <li>Counseling on responsible sexual behavior and delay of sexual debut.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-xl">
+                            <h3 class="font-bold text-lg">Priority Concerns (Philippine setting)</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Early sexual initiation (by age 19, 12% active).</li>
+                                <li>High unmet need for family planning among 15‑24 year olds (26%).</li>
+                                <li>Rising HIV incidence among young key populations (MSM, transgender women).</li>
+                                <li>Teenage pregnancy leading to school dropout and maternal risks.</li>
+                                <li>Lack of adolescent‑friendly reproductive health services.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-cyan-50 p-3 rounded-lg border-l-4 border-cyan-600">
+                        <p class="font-bold">⚕️ ARH services must be <span class="reveal-text">confidential, non‑judgmental, and accessible</span> to overcome barriers that adolescents face in seeking reproductive health care.</p>
+                    </div>
+                    <button onclick="openQuiz('reproductive')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl"><i class="fa-solid fa-list-check mr-3"></i> Take Quiz →</button>
+                </div>
+            </section>
+
+            <!-- SECTION 6: PHN Role & Nursing Care -->
+            <section id="phnrole" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-user-nurse text-ah mr-4"></i> PHN Role & Nursing Care</h2>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>Advocate for adolescent‑friendly health corners in RHUs (confidential, separate hours, trained staff).</li>
+                        <li>Conduct school‑based health education on puberty, nutrition, substance abuse, and reproductive health.</li>
+                        <li>Provide individual counseling on contraception, STI prevention, and mental health.</li>
+                        <li>Identify at‑risk adolescents (substance use, depression, risky sexual behavior) and refer appropriately.</li>
+                        <li>Collaborate with teachers, parents, and barangay youth leaders to create supportive environments.</li>
+                        <li>Implement programs on accident prevention (road safety, drowning, falls).</li>
+                        <li>Promote healthy lifestyle: physical activity, balanced diet, avoidance of smoking/alcohol.</li>
+                        <li>Maintain confidentiality and a non‑judgmental attitude when dealing with adolescents.</li>
+                        <li>Link adolescents to social services for teenage pregnancy, abuse, or mental health crises.</li>
+                    </ul>
+                    <div class="bg-indigo-50 p-4 rounded-lg mt-6 border-l-4 border-indigo-600">
+                        <p class="font-bold">📌 Key principle: Adolescents are more likely to seek care when services are youth‑friendly, confidential, and offered without stigma.</p>
+                    </div>
+                    <button onclick="openQuiz('phnrole')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl"><i class="fa-solid fa-list-check mr-3"></i> Take Quiz →</button>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Mnemonics & Key Facts -->
+            <section id="mnemonics" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-ah pb-3"><i class="fa-solid fa-brain text-ah mr-4"></i> Mnemonics & Key Facts</h2>
+                    <div class="overflow-x-auto rounded-lg border">
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-slate-800 text-white"><tr><th class="p-2">Topic</th><th class="p-2">Mnemonic</th><th class="p-2">Meaning</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-semibold">Adolescent age ranges</td><td class="font-black text-ah">10‑20 · 15‑24</td><td class="reveal-text">Adolescence (10‑20), Youth (15‑24), Young people (10‑24)</td></tr>
+                                <tr class="bg-slate-50"><td class="p-2 font-semibold">Essential health care package (6 areas)</td><td class="font-black text-ah">M.C.N.M.F.D.</td><td class="reveal-text">Management of illness, Counseling (substance/sexuality/RTI), Nutrition, Mental health, Family planning, Dental</td></tr>
+                                <tr><td class="p-2 font-semibold">Leading cause of death</td><td class="font-black text-ah">Accidents & Injuries</td><td class="reveal-text">Rate 30.68/100,000; >22% of all accident deaths are youth</td></tr>
+                                <tr class="bg-slate-50"><td class="p-2 font-semibold">Adolescent risk behaviors</td><td class="font-black text-ah">S.S.D.A.</td><td class="reveal-text">Smoking (21%), Sex (12% active by 19), Drinking (41%), Drugs (3‑10% positivity)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button onclick="openQuiz('final_quiz')" class="mt-8 w-full bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-md hover:bg-amber-400"><i class="fa-solid fa-graduation-cap mr-3"></i> Take Final 50‑Item Exam</button>
+                </div>
+            </section>
+
+            <!-- Final Quiz Section -->
+            <section id="final_quiz_sec" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 text-center min-h-[60vh] flex flex-col justify-center items-center">
+                    <i class="fa-solid fa-graduation-cap text-8xl text-amber-400 mb-6"></i>
+                    <h2 class="text-4xl font-black text-slate-800 mb-4">Final Comprehensive Exam</h2>
+                    <p class="text-lg text-slate-600 mb-8 max-w-2xl">50‑item exam covering definitions, epidemiology, health risks, strategic thrusts, essential health package, adolescent reproductive health, and PHN role. Score ≥80% to master the module.</p>
+                    <button onclick="openQuiz('final_quiz')" class="w-full max-w-md bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 text-xl"><i class="fa-solid fa-flag-checkered mr-2"></i> Start Final Exam</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Quiz Modal -->
+    <div id="quiz-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeQuiz()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <h2 id="quiz-title" class="text-3xl font-black text-slate-800 mb-2"></h2>
+            <p class="text-slate-600 mb-6 font-medium border-b pb-4">Score at least <span class="font-bold text-ah">80%</span> to unlock next section.</p>
+            <div id="quiz-questions-container" class="space-y-4"></div>
+            <button id="quiz-submit-btn" onclick="submitQuiz()" class="mt-8 w-full bg-ah text-white font-bold py-4 rounded-xl hover:bg-ah-dark transition-colors shadow-lg">Submit Answers</button>
+            <div id="quiz-result-container" class="hidden mt-6 p-4 rounded-xl bg-slate-100"></div>
+        </div>
+    </div>
+
+    <script>
+        let unlockedSections = ['home'];
+        // ---------- QUIZ DATA (based on CHN White Book pages 176-177, 182) ----------
+        const quizzes = {
+            overview: { title: "Adolescent Health: Overview & Epidemiology", next: "risks", questions: [
+                { q: "According to WHO, adolescence is defined as the age range:", options: ["0‑10 years", "10‑20 years", "15‑24 years", "20‑30 years"], ans: 1 },
+                { q: "The term 'youth' refers to individuals aged:", options: ["10‑14 years", "10‑20 years", "15‑24 years", "20‑30 years"], ans: 2 },
+                { q: "Young people (combined group) are aged:", options: ["10‑14 years", "15‑20 years", "10‑24 years", "15‑30 years"], ans: 2 },
+                { q: "What percentage of the Philippine population are young people (10‑24)?", options: ["15%", "20%", "30%", "40%"], ans: 2 },
+                { q: "By age 24, what percentage of Filipino women are already mothers?", options: ["25%", "35%", "45%", "55%"], ans: 2 },
+                { q: "Which age group has the highest unmet need for family planning?", options: ["15‑24 years", "25‑34 years", "35‑44 years", "45+ years"], ans: 0 },
+                { q: "Mortality rate for young people (10‑24) from all causes is approximately:", options: ["0.87 per 100,000", "8.7 per 100,000", "87 per 100,000", "870 per 100,000"], ans: 0 },
+                { q: "Early adolescence refers to ages:", options: ["10‑14 years", "15‑19 years", "20‑24 years", "10‑20 years"], ans: 0 },
+                { q: "Late adolescence is defined as:", options: ["10‑14 years", "15‑19 years", "20‑24 years", "10‑20 years"], ans: 1 },
+                { q: "The period of transition from childhood to adulthood is called:", options: ["Puberty", "Adolescence", "Youth", "Emerging adulthood"], ans: 1 }
+            ] },
+            risks: { title: "Health Risks & Behaviors", next: "strategies", questions: [
+                { q: "What percentage of 19‑year‑olds are already sexually active?", options: ["5%", "12%", "21%", "41%"], ans: 1 },
+                { q: "Smoking prevalence among adolescents is:", options: ["10%", "21%", "30%", "41%"], ans: 1 },
+                { q: "What percentage of adolescents admit to social drinking?", options: ["12%", "21%", "41%", "51%"], ans: 2 },
+                { q: "Random drug testing in high school students shows positivity rates of:", options: ["1‑2%", "3‑10%", "15‑20%", "25‑30%"], ans: 1 },
+                { q: "Leading cause of death among young people (10‑24) is:", options: ["Cardiovascular disease", "Accidents and injuries", "Cancer", "Infectious diseases"], ans: 1 },
+                { q: "Accident/injury death rate among 10‑24 year olds is:", options: ["10.5 per 100,000", "20.68 per 100,000", "30.68 per 100,000", "40.68 per 100,000"], ans: 2 },
+                { q: "What percentage of all accident/injury deaths occur in adolescents and youth?", options: ["12.5%", "22.52%", "32.5%", "42.5%"], ans: 1 },
+                { q: "Which of the following is a major health risk behavior among Filipino adolescents?", options: ["Early sexual activity", "Smoking", "Alcohol use", "All of the above"], ans: 3 },
+                { q: "The unmet need for family planning among 15‑24 year olds is:", options: ["16%", "26%", "36%", "46%"], ans: 1 },
+                { q: "Which statement about adolescent health is TRUE?", options: ["Adolescents have high mortality from infectious diseases", "Risk‑taking behaviors are rare", "Accidents are the top cause of death", "Mental health issues are insignificant"], ans: 2 }
+            ] },
+            strategies: { title: "Strategic Thrusts (2005-2010)", next: "package", questions: [
+                { q: "One of the strategic thrusts is to develop:", options: ["Adult health services", "Adolescent‑friendly health services", "Only curative services", "Hospital‑based programs"], ans: 1 },
+                { q: "DOH aims to build the capability of young people to promote:", options: ["Only academic achievement", "Healthy lifestyles including reproductive health", "Only sports", "Only nutrition"], ans: 1 },
+                { q: "Fertility awareness activities are targeted at:", options: ["Only parents", "High school teachers and students", "Only college students", "Only out‑of‑school youth"], ans: 1 },
+                { q: "The goal of adolescent‑friendly services is to:", options: ["Exclude adolescents", "Provide age‑appropriate, confidential, respectful care", "Only give vaccinations", "Replace all other health services"], ans: 1 },
+                { q: "Which of the following is NOT a strategic thrust?", options: ["Adolescent‑friendly environments", "Building capability of young people", "Mandatory sterilization", "Fertility awareness activities"], ans: 2 },
+                { q: "The strategic thrusts are part of which DOH planning period?", options: ["1999‑2004", "2005‑2010", "2011‑2016", "2017‑2022"], ans: 1 },
+                { q: "Sound reproductive health practices for adolescents include:", options: ["Abstinence", "Contraception knowledge", "STI prevention", "All of the above"], ans: 3 },
+                { q: "Accident prevention is included in which strategic thrust?", options: ["Adolescent‑friendly services", "Building capability of young people for healthy lifestyles", "Fertility awareness", "None"], ans: 1 },
+                { q: "The strategic thrusts emphasize coordination with:", options: ["Only DOH", "Other government agencies", "Only private sector", "Only NGOs"], ans: 1 },
+                { q: "What is the ultimate aim of adolescent health strategies?", options: ["Reduce fertility to zero", "Improve health and quality of life of young people", "Increase hospital admissions", "Promote only traditional medicine"], ans: 1 }
+            ] },
+            package: { title: "Essential Health Care Package", next: "reproductive", questions: [
+                { q: "Which of the following is part of the essential health care package for adolescents?", options: ["Management of illness", "Counseling on substance abuse", "Nutrition and diet counseling", "All of the above"], ans: 3 },
+                { q: "The package includes counseling on:", options: ["Only finance", "Sexuality and reproductive tract infections", "Only politics", "Only agriculture"], ans: 1 },
+                { q: "Mental health services for adolescents cover:", options: ["Only severe psychosis", "Depression, anxiety, stress management, suicide prevention", "Only addiction", "Only eating disorders"], ans: 1 },
+                { q: "Family planning for adolescents includes:", options: ["Only permanent sterilization", "Contraception, abstinence, prevention of teenage pregnancy", "Only natural methods", "Only condoms for HIV"], ans: 1 },
+                { q: "How many core service areas are listed in the essential package (according to White Book)?", options: ["4", "5", "6", "7"], ans: 2 },
+                { q: "Dental care is included because adolescents have high rates of:", options: ["Tooth fractures", "Dental caries and gum disease", "Oral cancer", "Tooth eruption problems"], ans: 1 },
+                { q: "Which of the following is NOT part of the essential package?", options: ["Management of illness", "Surgery for all", "Nutrition counseling", "Family planning"], ans: 1 },
+                { q: "RTIs in the counseling component refer to:", options: ["Respiratory tract infections", "Reproductive tract infections (STIs)", "Radiotherapy injuries", "Renal tract infections"], ans: 1 },
+                { q: "The essential package should be accessible in:", options: ["Only tertiary hospitals", "RHUs, schools, and community settings", "Only private clinics", "Only online"], ans: 1 },
+                { q: "Why is nutrition counseling important for adolescents?", options: ["Eating disorders, obesity, and undernutrition are common", "Adolescents don't eat", "Only for girls", "Only for athletes"], ans: 0 }
+            ] },
+            reproductive: { title: "Adolescent Reproductive Health", next: "phnrole", questions: [
+                { q: "Adolescent Reproductive Health (ARH) is a priority element under which framework?", options: ["EPI", "NTCP", "Philippine Reproductive Health framework", "Environmental Health"], ans: 2 },
+                { q: "ARH focuses on:", options: ["Fertility awareness, human sexuality, counseling", "Only family planning", "Only abortion", "Only STI treatment"], ans: 0 },
+                { q: "What percentage of 19‑year‑olds are sexually active?", options: ["5%", "12%", "21%", "41%"], ans: 1 },
+                { q: "Which group has the highest unmet need for family planning?", options: ["Women 15‑24", "Women 25‑34", "Men 15‑24", "Men 25‑34"], ans: 0 },
+                { q: "ARH services should be:", options: ["Judgmental", "Confidential and non‑judgmental", "Only for married adolescents", "Only for boys"], ans: 1 },
+                { q: "Teenage pregnancy is associated with:", options: ["School dropout", "Maternal risks", "Low birth weight", "All of the above"], ans: 3 },
+                { q: "Which of the following is a key ARH intervention?", options: ["Age‑appropriate sexuality education", "Access to contraceptive information", "STI/HIV education", "All of the above"], ans: 3 },
+                { q: "The Philippine Reproductive Health framework includes how many priority elements?", options: ["5", "8", "10", "12"], ans: 2 },
+                { q: "Which viral infection is a growing concern among young key populations in the Philippines?", options: ["HPV", "HIV", "Hepatitis A", "Influenza"], ans: 1 },
+                { q: "Parental consent for contraceptive services for minors is:", options: ["Always required", "Sometimes required depending on facility policy", "Never required", "Only for abortion"], ans: 1 }
+            ] },
+            phnrole: { title: "PHN Role & Nursing Care", next: "mnemonics", questions: [
+                { q: "The PHN should advocate for adolescent‑friendly health corners that offer:", options: ["Confidentiality and separate hours", "Only immunization", "Only adult care", "Only curative care"], ans: 0 },
+                { q: "School‑based health education for adolescents should include:", options: ["Puberty and nutrition", "Substance abuse", "Reproductive health", "All of the above"], ans: 3 },
+                { q: "When counseling an adolescent on contraception, the nurse should:", options: ["Be judgmental", "Maintain confidentiality and non‑judgmental attitude", "Refuse to provide information", "Only discuss abstinence"], ans: 1 },
+                { q: "Which of the following is an appropriate PHN intervention for at‑risk adolescents?", options: ["Refer for mental health services", "Ignore the behavior", "Punish the adolescent", "Only inform parents without consent"], ans: 0 },
+                { q: "The PHN should collaborate with which groups to support adolescent health?", options: ["Teachers", "Parents", "Barangay youth leaders", "All of the above"], ans: 3 },
+                { q: "Accident prevention programs for adolescents focus on:", options: ["Road safety, drowning, falls", "Only road safety", "Only sports injuries", "Only poisoning"], ans: 0 },
+                { q: "What is a key principle when dealing with adolescent patients?", options: ["Strict parental control", "Confidentiality and respect", "Only group sessions", "No questions asked"], ans: 1 },
+                { q: "Adolescents are more likely to seek care when services are:", options: ["Expensive", "Youth‑friendly and confidential", "Located far away", "Only curative"], ans: 1 },
+                { q: "Which of the following is a role of the PHN in adolescent substance abuse?", options: ["Provide rehabilitation alone", "Identify at‑risk adolescents and refer to appropriate services", "Prescribe medications", "Ignore the problem"], ans: 1 },
+                { q: "The PHN should link pregnant teenagers to:", options: ["Social services and prenatal care", "Only to police", "Only to adoption agencies", "No referral needed"], ans: 0 }
+            ] }
+        };
+        // Build final 50-item exam
+        let finalQ = [];
+        for (let sec of ['overview','risks','strategies','package','reproductive','phnrole']) {
+            finalQ = finalQ.concat(quizzes[sec].questions);
+        }
+        while(finalQ.length < 50) finalQ.push({ q: "What does ARH stand for in the Philippine Reproductive Health context?", options: ["Adult Reproductive Health", "Adolescent Reproductive Health", "Advanced Reproductive Hormones", "Annual Reproductive History"], ans: 1 });
+        quizzes['final_quiz'] = { title: "Final 50‑Item Exam: Adolescent Health", next: null, questions: finalQ };
+
+        function unlockFirstSection() { if(!unlockedSections.includes('overview')) { unlockedSections.push('overview'); updateSidebarUI(); } showSection('overview'); }
+        function showSection(id) {
+            if (!unlockedSections.includes(id) && id !== 'home') { alert("Please pass the quiz at the end of the previous section."); return; }
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-ah-light','text-ah-dark','border-r-4','border-ah-dark'); btn.classList.add('text-slate-600'); });
+            const active = document.getElementById('btn-'+id); if(active) active.classList.add('bg-ah-light','text-ah-dark','border-r-4','border-ah-dark');
+            if(window.innerWidth<768) document.getElementById('sidebar').classList.add('hidden');
+            document.querySelector('main').scrollTop = 0;
+        }
+        function updateSidebarUI() {
+            ['home','overview','risks','strategies','package','reproductive','phnrole','mnemonics','final_quiz_sec'].forEach(sec=>{
+                const btn = document.getElementById('btn-'+sec); if(!btn) return;
+                const lock = btn.querySelector('.fa-lock'), icon = btn.querySelector('.nav-icon');
+                if(unlockedSections.includes(sec) || sec==='home') { btn.classList.remove('locked-section'); if(lock) lock.classList.add('hidden'); if(icon) icon.classList.remove('hidden'); }
+                else { btn.classList.add('locked-section'); if(lock) lock.classList.remove('hidden'); if(icon) icon.classList.add('hidden'); }
+            });
+        }
+        let currentQuiz = null;
+        function openQuiz(sectionId) {
+            currentQuiz = sectionId; const qd = quizzes[sectionId]; if(!qd) return;
+            document.getElementById('quiz-title').innerText = qd.title;
+            const container = document.getElementById('quiz-questions-container'); container.innerHTML = '';
+            qd.questions.forEach((q,idx)=>{
+                let html = `<div class="bg-slate-50 p-4 rounded-xl border mb-4"><p class="font-bold mb-3">${idx+1}. ${q.q}</p><div class="space-y-2">`;
+                q.options.forEach((opt,oi)=>{ html += `<label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-white cursor-pointer"><input type="radio" name="q${idx}" value="${oi}" class="form-radio text-ah"><span>${opt}</span></label>`; });
+                html += `</div><div class="feedback-${idx} text-sm mt-2 hidden"></div></div>`; container.innerHTML += html;
+            });
+            document.getElementById('quiz-submit-btn').classList.remove('hidden');
+            document.getElementById('quiz-result-container').classList.add('hidden');
+            document.getElementById('quiz-modal').classList.remove('hidden');
+        }
+        function closeQuiz() { document.getElementById('quiz-modal').classList.add('hidden'); }
+        function submitQuiz() {
+            const qd = quizzes[currentQuiz]; if(!qd) return;
+            let score = 0;
+            for(let i=0;i<qd.questions.length;i++) {
+                const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                const isCorrect = sel && parseInt(sel.value) === qd.questions[i].ans;
+                if(isCorrect) score++;
+                const fbDiv = document.querySelector(`.feedback-${i}`);
+                if(fbDiv) {
+                    fbDiv.classList.remove('hidden');
+                    const correctAns = qd.questions[i].options[qd.questions[i].ans];
+                    if(isCorrect) fbDiv.innerHTML = `<span class="text-green-700"><i class="fa-regular fa-circle-check"></i> Correct</span>`;
+                    else fbDiv.innerHTML = `<span class="text-red-700"><i class="fa-regular fa-circle-xmark"></i> Incorrect. Correct answer: ${correctAns}</span>`;
+                }
+            }
+            const percent = (score/qd.questions.length)*100;
+            const resultDiv = document.getElementById('quiz-result-container');
+            const btn = document.getElementById('quiz-submit-btn'); btn.classList.add('hidden'); resultDiv.classList.remove('hidden');
+            if(percent>=80) {
+                if(currentQuiz === 'final_quiz') {
+                    resultDiv.innerHTML = `<div class="text-amber-500 text-6xl text-center mb-2">🏆</div><h3 class="text-2xl font-black text-center">Adolescent Health Expert!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="closeQuiz()" class="mt-4 w-full bg-slate-800 text-white py-2 rounded-lg">Close Exam</button>`;
+                    return;
+                }
+                if(qd.next && !unlockedSections.includes(qd.next)) { unlockedSections.push(qd.next); if(qd.next === 'mnemonics') unlockedSections.push('final_quiz_sec'); updateSidebarUI(); }
+                resultDiv.innerHTML = `<div class="text-green-600 text-5xl text-center mb-2">✓</div><h3 class="text-2xl font-black text-center">Passed!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="closeQuiz(); showSection('${qd.next}')" class="mt-4 w-full bg-green-600 text-white py-2 rounded-lg">Unlock Next Section</button>`;
+            } else {
+                resultDiv.innerHTML = `<div class="text-red-500 text-5xl text-center mb-2">✗</div><h3 class="text-2xl font-black text-center">Failed</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%) - need 80%</p><button onclick="openQuiz('${currentQuiz}')" class="mt-4 w-full bg-slate-600 text-white py-2 rounded-lg">Try Again</button>`;
+            }
+        }
+        function toggleRecallMode() {
+            const active = !document.body.classList.contains('recall-mode');
+            const toggle = document.getElementById('recall-toggle'), knob = document.getElementById('recall-knob');
+            if(active) { document.body.classList.add('recall-mode'); toggle.classList.add('bg-ah-dark'); knob.classList.add('translate-x-6'); }
+            else { document.body.classList.remove('recall-mode'); toggle.classList.remove('bg-ah-dark'); knob.classList.remove('translate-x-6'); }
+        }
+        function toggleMobileMenu() { const s = document.getElementById('sidebar'); if(s.classList.contains('hidden')) s.classList.remove('hidden'); else s.classList.add('hidden'); }
+        document.addEventListener('DOMContentLoaded', ()=>{
+            updateSidebarUI();
+            document.querySelectorAll('.reveal-text').forEach(el=>el.addEventListener('click',function(){ if(document.body.classList.contains('recall-mode')) this.classList.toggle('revealed'); }));
+            const flip = document.getElementById('flipCardStages'); if(flip) flip.addEventListener('click',()=>flip.classList.toggle('flipped'));
+        });
+    </script>
+</body>
+</html>
